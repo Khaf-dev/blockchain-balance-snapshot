@@ -1,6 +1,6 @@
 # Blockchain Balance Snapshot
 
-Automation script untuk fetch token balance dari beberapa blockchain pada timestamp tertentu.
+Automation script to fetch token balance from multiple blockchains at a specific timestamp.
 
 **Snapshot Target:** `2024-12-31 23:59:59 UTC` (unix: `1735689599`)
 
@@ -8,8 +8,8 @@ Automation script untuk fetch token balance dari beberapa blockchain pada timest
 
 ## Chains & Tokens
 
-| Chain | Token |                       Address                      |
-|-------|-------|----------------------------------------------------|
+| Chain | Token | Address                                            |
+| ----- | ----- | -------------------------------------------------- |
 | Avail | AVAIL | `5H1qc1com3wK9k1jxa6RjPFv1cB83G9HHEcFfSm8VtkpqPYH` |
 | KCC   | KCS   | `0x14ea40648fc8c1781d19363f5b9cc9a877ac2469`       |
 | KCC   | APE   | `0x14ea40648fc8c1781d19363f5b9cc9a877ac2469`       |
@@ -19,12 +19,12 @@ Automation script untuk fetch token balance dari beberapa blockchain pada timest
 
 ---
 
-## Struktur Folder
+## Folder Structure
 
 ```
 blockchain_snapshot/
-├── main.py               ← Entry point, jalankan ini
-├── config.py             ← Semua alamat wallet, contract, dan API endpoint
+├── main.py               ← Entry point, run this
+├── config.py             ← All wallet addresses, contracts, and API endpoints
 ├── requirements.txt
 ├── README.md
 ├── chains/
@@ -39,80 +39,85 @@ blockchain_snapshot/
 
 ---
 
-## Setup & Cara Jalankan
+## Setup & How to Run
 
 **1. Install dependencies**
+
 ```bash
 pip install requests
-pip install substrate-interface   # opsional, untuk Avail via RPC langsung
+pip install substrate-interface   # optional, to Avail via RPC directly
 ```
 
-**2. Jalankan script**
+**2. Run the script**
+
 ```bash
 python main.py
 ```
 
 **3. Output**
-- Terminal: tabel hasil semua chain
+
+- Terminal: table of results of all chains
 - File: `results.json`
 
 ---
 
-## Cara Kerja
+## How's this works?
 
-### Menemukan Block Target
-Setiap chain punya pendekatan berbeda:
+### Finding the Target Block
 
-| Chain |                Strategi                 |                                Alasan                                     |
-|-------|-----------------------------------------|---------------------------------------------------------------------------|
-| Avail | Estimasi rumus + verifikasi Subscan API | Block time stabil ~20 detik                                               |
-| KCC   | Binary search via EVM JSON-RPC          | Block time ~3 detik, lebih akurat pakai search                            |
-| TON   | Estimasi dari reference seqno           | TonCenter rate limit, hindari terlalu banyak request                      |
-| LTC   | Estimasi rumus + verifikasi BlockCypher | Block time stabil ~150 detik                                              |
+Each chain has a different approach:
+
+| Chain | Strategy                                      | Reason                                            |
+| ----- | --------------------------------------------- | ------------------------------------------------- |
+| Avail | Subscan API formula estimation + verification | Stable block time ~20 seconds                     |
+| KCC   | Binary search via EVM JSON-RPC                | Block time ~3 seconds, more accurate using search |
+| TON   | Estimates from reference seqno                | TonCenter rate limit, avoid too many requests     |
+| LTC   | BlockCypher formula estimation + verification | Stable block time ~150 seconds                    |
 
 ### Fetch Balance
-| Chain |                           Method                         |
-|-------|----------------------------------------------------------|
-| Avail | `substrate.query(System.Account, address, block_hash)`   |
-| KCS   | `eth_getBalance(address, block_hex)` via JSON-RPC        |
-| APE   | `eth_call(balanceOf(address), block_hex)` via JSON-RPC   |
-| TON   | `getAddressInformation` via TonCenter API                |
-| USDT  | `runGetMethod` → JettonMaster → JettonWallet (2 langkah) |
-| LTC   | Blockchair API dengan parameter `?before=<block>`        |
+
+| Chain | Method                                                 |
+| ----- | ------------------------------------------------------ |
+| Avail | `substrate.query(System.Account, address, block_hash)` |
+| KCS   | `eth_getBalance(address, block_hex)` via JSON-RPC      |
+| APE   | `eth_call(balanceOf(address), block_hex)` via JSON-RPC |
+| TON   | `getAddressInformation` via TonCenter API              |
+| USDT  | `runGetMethod` → JettonMaster → JettonWallet (2 steps) |
+| LTC   | Blockchair API with parameter `?before=<block>`        |
 
 ---
 
 ## Known Limitations
 
 **KCS (KCC)**
-Public RPC `rpc-mainnet.kcc.network` bukan archive node. Query ke block lama menghasilkan error `missing trie node`. Script otomatis fallback ke balance `latest` dengan keterangan. Untuk nilai historis yang akurat diperlukan KCC archive node.
+The public RPC `rpc-mainnet.kcc.network` is not an archive node. Queries to older blocks result in a `missing trie node` error. The script automatically falls back to the `latest` balance with a note. For accurate historical values, a KCC archive node is required.
 
 **TON (native & USDT)**
-TonCenter free tier tidak support historical state query per seqno. Balance yang direturn adalah balance saat ini. Untuk nilai historis akurat diperlukan TON archive node atau Tonviewer Pro API.
+The TonCenter free tier does not support historical state queries per seqno. The returned balance is the current balance. For accurate historical values, a TON archive node or the Tonviewer Pro API is required.
 
 **USDT di TON**
-Wallet ini tidak pernah hold USDT asli (Tether official). Yang ada hanya fake/SCAM token (terdeteksi badge SCAM di Tonviewer). Balance = 0 USDT, dikonfirmasi via `runGetMethod` ke JettonMaster resmi yang return 404/422.
+This wallet never holds genuine USDT (official Tether). It only holds fake/scam tokens (detected with a SCAM badge in Tonviewer). Balance = 0 USDT, confirmed via `runGetMethod` to the official JettonMaster, which returns 404/422.
 
 ---
 
-## APIs yang Dipakai
+## APIs Used
 
-| API          | Endpoint                         |                  Dipakai untuk                     |
-|--------------|----------------------------------|----------------------------------------------------|
-| Subscan      | `avail.api.subscan.io/api`       | Verifikasi block Avail                             |
-| KCC RPC      | `rpc-mainnet.kcc.network`        | Block discovery + balance KCC                      |
-| TonCenter v2 | `toncenter.com/api/v2`           | Seqno + balance TON                                |
-| BlockCypher  | `api.blockcypher.com/v1/ltc`     | Verifikasi block LTC                               |
-| Blockchair   | `api.blockchair.com/litecoin`    | Balance LTC historis                               |
+| API          | Endpoint                      | Used for                      |
+| ------------ | ----------------------------- | ----------------------------- |
+| Subscan      | `avail.api.subscan.io/api`    | Verify block availability     |
+| KCC RPC      | `rpc-mainnet.kcc.network`     | Block discovery + balance KCC |
+| TonCenter v2 | `toncenter.com/api/v2`        | Seqno + balance TON           |
+| BlockCypher  | `api.blockcypher.com/v1/ltc`  | LTC block verification        |
+| Blockchair   | `api.blockchair.com/litecoin` | Historical LTC balance        |
 
 ---
 
-## Konfigurasi
+## Configuration
 
-Semua yang perlu diubah ada di `config.py`:
+Everything that needs to be changed is in `config.py`:
 
 ```python
-SNAPSHOT_TS        = 1735689599          # ganti kalau mau timestamp lain
-APE_CONTRACT_KCC   = "0xdae6c2..."       # verified dari scan.kcc.io
-USDT_JETTON_MASTER = "EQCxE6mU..."       # verified dari tether.to official
+SNAPSHOT_TS        = 1735689599          # change if you want another timestamp
+APE_CONTRACT_KCC   = "0xdae6c2..."       # verified from scan.kcc.io
+USDT_JETTON_MASTER = "EQCxE6mU..."       # verified from tether.to official
 ```
