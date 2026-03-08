@@ -121,3 +121,7 @@ SNAPSHOT_TS        = 1735689599          # change if you want another timestamp
 APE_CONTRACT_KCC   = "0xdae6c2..."       # verified from scan.kcc.io
 USDT_JETTON_MASTER = "EQCxE6mU..."       # verified from tether.to official
 ```
+
+## RESULTS
+<img width="1341" height="818" alt="Screenshot 2026-03-08 221116" src="https://github.com/user-attachments/assets/c2e1a626-596c-4662-98d7-c145ce2ad455" />
+
