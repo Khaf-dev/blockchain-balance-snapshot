@@ -1,0 +1,48 @@
+{
+  "snapshot_timestamp": 1735689599,
+  "snapshot_utc": "2024-12-31 23:59:59",
+  "results": [
+    {
+      "chain": "AVAIL",
+      "address": "5H1qc1com3wK9k1jxa6RjPFv1cB83G9HHEcFfSm8VtkpqPYH",
+      "token": "AVAIL",
+      "block": 780222,
+      "balance": " 21796042.866814 AVAIL"
+    },
+    {
+      "chain": "KCC",
+      "address": "0x14ea40648fc8c1781d19363f5b9cc9a877ac2469",
+      "token": "KCS",
+      "block": 47928000,
+      "balance": "65336.176018 KCS"
+    },
+    {
+      "chain": "KCC",
+      "address": "0x14ea40648fc8c1781d19363f5b9cc9a877ac2469",
+      "token": "APE",
+      "block": 47928000,
+      "balance": "377.019662 APE"
+    },
+    {
+      "chain": "TON",
+      "address": "EQBysKw2y2jUpOAaUNEmxM9BqUg4iScsiOGgdTZvodwaP-jq",
+      "token": "TON",
+      "block": "seqno=42108056",
+      "balance": "1152.703156971 TON (seqno 42108056)"
+    },
+    {
+      "chain": "TON",
+      "address": "EQBysKw2y2jUpOAaUNEmxM9BqUg4iScsiOGgdTZvodwaP-jq",
+      "token": "USDT",
+      "block": "seqno=42108056",
+      "balance": "0 USDT (verified via Tonviewer: wallet only has fake/SCAM USDT, there is no official Tether)"
+    },
+    {
+      "chain": "LTC",
+      "address": "ltc1qv7wsvsmx6tqxjz9l750n0pj524na4lmqrjhyz9",
+      "token": "LTC",
+      "block": 2818610,
+      "balance": " 24733.20600247 LTC"
+    }
+  ]
+}
