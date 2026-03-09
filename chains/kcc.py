@@ -83,7 +83,7 @@ def get_kcs_balance(address: str, block_number: int) -> str:
                 })
                 wei = int(data["result"], 16)
                 kcs = wei / 1e18
-                # Catat bahwa ini bukan nilai historis
+                # Note that these are not historical values.
                 return (f"{kcs:.6f} KCS "
                         f"(current balance — public RPC not supported"
                         f"historical query, use archive node for EOY 2024 values)")
