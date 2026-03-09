@@ -62,7 +62,7 @@ def get_usdt_balance(address: str, seqno) -> str:
     """
     try:
         time.sleep(1)
-        # Coba query dulu ke JettonMaster
+        # Try querying JettonMaster first
         resp1 = http_post(f"{TON_API}/runGetMethod", {
             "address": USDT_JETTON_MASTER,
             "method":  "get_wallet_address",
@@ -97,7 +97,7 @@ def get_usdt_balance(address: str, seqno) -> str:
 
     except Exception as e:
         err = str(e)
-        # 404/422 = JettonWallet tidak exist = 0 USDT
+        # 404/422 = JettonWallet doesn't exist = 0 USDT
         if any(code in err for code in ["404", "422", "Not Found", "Unprocessable"]):
             return ("0 USDT "
                     "(verified via Tonviewer: wallet only has fake/SCAM USDT, "
